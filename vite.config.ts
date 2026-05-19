@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/wiki/',
   plugins: [
     tailwindcss(),
     VitePWA({
@@ -18,7 +19,7 @@ export default defineConfig({
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/',
+        start_url: '/wiki/',
         icons: [
           {
             src: 'favicon.svg',
