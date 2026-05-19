@@ -6,11 +6,12 @@ import { useFileTree } from './hooks/useFileTree'
 import { useFileEditor } from './hooks/useFileEditor'
 import { useMediaQuery } from './hooks/useMediaQuery'
 import { FolderPicker } from './components/FolderPicker'
+import { ReactivatePrompt } from './components/ReactivatePrompt'
 import { FileTree } from './components/FileTree'
 import { Editor } from './components/Editor'
 
 const App: FC = () => {
-  const { folderHandle, isOpening, openFolder, closeFolder } =
+  const { folderHandle, permissionState, openFolder, reactivate, closeFolder } =
     usePersistedFolder()
   const { tree, isLoading, error: treeError, refresh } = useFileTree(folderHandle)
   const {
@@ -50,7 +51,7 @@ const App: FC = () => {
 
   // -- Loading state ---------------------------------------------------
 
-  if (isOpening) {
+  if (permissionState === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
         <div className="flex items-center gap-2 text-gray-400">
@@ -59,6 +60,12 @@ const App: FC = () => {
         </div>
       </div>
     )
+  }
+
+  // -- Handle needs reactivation (prompt state) ------------------------
+
+  if (permissionState === 'prompt') {
+    return <ReactivatePrompt onReactivate={reactivate} />
   }
 
   // -- No folder selected: show the picker -----------------------------
