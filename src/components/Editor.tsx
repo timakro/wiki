@@ -1,6 +1,8 @@
 import { useRef, useEffect, type FC } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import type { OpenFile } from '../lib/types'
+import { isTodoContent } from '../lib/todo'
+import { TodoEditor } from './TodoEditor'
 
 interface EditorProps {
   file: OpenFile
@@ -21,10 +23,12 @@ export const Editor: FC<EditorProps> = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Focus the textarea when a file is opened
+  // Focus the textarea when a file is opened (only in normal mode)
   useEffect(() => {
-    textareaRef.current?.focus()
-  }, [file.handle])
+    if (!isTodoContent(content)) {
+      textareaRef.current?.focus()
+    }
+  }, [file.handle, content])
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -60,18 +64,22 @@ export const Editor: FC<EditorProps> = ({
         </div>
       )}
 
-      {/* Textarea */}
-      <textarea
-        ref={textareaRef}
-        value={content}
-        onChange={(e) => onChange(e.target.value)}
-        className="flex-1 w-full resize-none border-0 bg-white text-gray-900 p-4 text-sm font-mono leading-relaxed outline-none placeholder-gray-300"
-        spellCheck={false}
-        autoCapitalize="off"
-        autoComplete="off"
-        autoCorrect="off"
-        placeholder="Start typing..."
-      />
+      {/* Todo editor or regular textarea */}
+      {isTodoContent(content) ? (
+        <TodoEditor content={content} onChange={onChange} />
+      ) : (
+        <textarea
+          ref={textareaRef}
+          value={content}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1 w-full resize-none border-0 bg-white text-gray-900 p-4 text-sm font-mono leading-relaxed outline-none placeholder-gray-300"
+          spellCheck={false}
+          autoCapitalize="off"
+          autoComplete="off"
+          autoCorrect="off"
+          placeholder="Start typing..."
+        />
+      )}
     </div>
   )
 }
